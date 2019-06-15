@@ -4,6 +4,7 @@ import ImageHoster.model.Image;
 import ImageHoster.repository.ImageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ImageHoster.model.Comment;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,9 +27,9 @@ public class ImageService {
     }
 
 
-    //The method calls the getImageByTitle() method in the Repository and passes the title of the image to be fetched
-    public Image getImageByTitle(String title) {
-        return imageRepository.getImageByTitle(title);
+    //The method calls the getImageById() method in the Repository and passes the ImageId of the image to be fetched
+    public Image getImageById(Integer imageId) {
+        return imageRepository.getImageById(imageId);
     }
 
     //The method calls the getImage() method in the Repository and passes the id of the image to be fetched
@@ -44,6 +45,11 @@ public class ImageService {
     //The method calls the deleteImage() method in the Repository and passes the Image id of the image to be deleted in the database
     public void deleteImage(Integer imageId) {
         imageRepository.deleteImage(imageId);
+    }
+
+    //The method calls the updateComment() method in the Repository and passes the comment of the image to be inserted in the database
+    public void updateComment(Comment comment) {
+        imageRepository.updateComment(comment);
     }
 
 }
