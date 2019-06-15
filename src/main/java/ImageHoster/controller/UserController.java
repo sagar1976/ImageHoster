@@ -40,10 +40,52 @@ public class UserController {
     //This controller method is called when the request pattern is of type 'users/registration' and also the incoming request is of POST type
     //This method calls the business logic and after the user record is persisted in the database, directs to login page
     @RequestMapping(value = "users/registration", method = RequestMethod.POST)
-    public String registerUser(User user) {
-        userService.registerUser(user);
-        return "redirect:/users/login";
+    public String registerUser(User user, Model model) {
+        String error = "Password must contain atleast 1 alphabet, 1 number & 1 special character";
+        String currentPassword = user.getPassword();
+        boolean qualifyPassword = checkPassword(currentPassword);
+        if (qualifyPassword) {
+            userService.registerUser(user);
+            return "users/login";
+        }
+        else {
+            model.addAttribute("User", user);
+            model.addAttribute("passwordTypeError", error);
+            return "users/registration";
+        }
     }
+
+    //This method checks for password strength for password combination of "Password must contain atleast 1 alphabet, 1 number & 1 special character"
+    private static boolean checkPassword(String str){
+        char ch;
+        boolean capitalLetter = false;
+        boolean smallLetter = false;
+        boolean isNumber = false;
+        boolean specialCharacter = false;
+
+        for(int i=0; i < str.length(); i++){
+            ch = str.charAt(i);
+            if( Character.isDigit(ch)){
+                isNumber = true;
+            }
+            else if (Character.isUpperCase(ch)) {
+                capitalLetter = true;
+            }
+            else if(Character.isLowerCase(ch)) {
+                smallLetter = true;
+            }
+
+            if (Character.isDigit(ch) == false && Character.isUpperCase(ch) == false && Character.isLowerCase(ch) == false ) {
+                specialCharacter = true;
+            }
+
+            if (isNumber  && specialCharacter &&(capitalLetter || smallLetter)){
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     //This controller method is called when the request pattern is of type 'users/login'
     @RequestMapping("users/login")
