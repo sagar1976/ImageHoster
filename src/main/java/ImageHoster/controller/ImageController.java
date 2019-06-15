@@ -36,18 +36,18 @@ public class ImageController {
     }
 
     //This method is called when the details of the specific image with corresponding title are to be displayed
-    //The logic is to get the image from the databse with corresponding title. After getting the image from the database the details are shown
+    //The logic is to get the image from the database with corresponding ImageId. After getting the image from the database the details are shown
     //First receive the dynamic parameter in the incoming request URL in a string variable 'title' and also the Model type object
-    //Call the getImageByTitle() method in the business logic to fetch all the details of that image
+    //Call the getImageById() method in the business logic to fetch all the details of that image
     //Add the image in the Model type object with 'image' as the key
-    //Return 'images/image.html' file
+    //Return 'images/image.html' file. Also images will same title can be retrieved without any errors
 
     //Also now you need to add the tags of an image in the Model type object
     //Here a list of tags is added in the Model type object
     //this list is then sent to 'images/image.html' file and the tags are displayed
-    @RequestMapping("/images/{title}")
-    public String showImage(@PathVariable("title") String title, Model model) {
-        Image image = imageService.getImageByTitle(title);
+    @RequestMapping("/images/{imageId}/{title}")
+    public String showImage(@PathVariable("imageId") Integer imageId, Model model) {
+        Image image = imageService.getImageById(imageId);
         model.addAttribute("image", image);
         model.addAttribute("tags", image.getTags());
         return "images/image";
@@ -91,15 +91,25 @@ public class ImageController {
 
     //The method first needs to convert the list of all the tags to a string containing all the tags separated by a comma and then add this string in a Model type object
     //This string is then displayed by 'edit.html' file as previous tags of an image
+    //This method will allow only user-owner of the image to edit the image and for other users it will show same image
     @RequestMapping(value = "/editImage")
-    public String editImage(@RequestParam("imageId") Integer imageId, Model model) {
+    public String editImage(@RequestParam("imageId") Integer imageId, Model model, HttpSession session) {
+        User user = (User) session.getAttribute("loggeduser");
         Image image = imageService.getImage(imageId);
-
-        String tags = convertTagsToString(image.getTags());
-        model.addAttribute("image", image);
-        model.addAttribute("tags", tags);
-        return "images/edit";
+        User existingUser = image.getUser();
+        String error = "Only the owner of the image can edit the image";
+        if (user.getId() == existingUser.getId()) {
+            String tags = convertTagsToString(image.getTags());
+            model.addAttribute("image", image);
+            model.addAttribute("tags", tags);
+            return "images/edit";
+        } else {
+            model.addAttribute("image", image);
+            model.addAttribute("editError", error);
+            return "images/image";
+        }
     }
+
 
     //This controller method is called when the request pattern is of type 'images/edit' and also the incoming request is of PUT type
     //The method receives the imageFile, imageId, updated image, along with the Http Session
@@ -132,17 +142,28 @@ public class ImageController {
         updatedImage.setDate(new Date());
 
         imageService.updateImage(updatedImage);
-        return "redirect:/images/" + updatedImage.getTitle();
+        return "redirect:/images";
     }
 
 
     //This controller method is called when the request pattern is of type 'deleteImage' and also the incoming request is of DELETE type
     //The method calls the deleteImage() method in the business logic passing the id of the image to be deleted
     //Looks for a controller method with request mapping of type '/images'
+    //This controller method only allows owner of the image to delete the image
     @RequestMapping(value = "/deleteImage", method = RequestMethod.DELETE)
-    public String deleteImageSubmit(@RequestParam(name = "imageId") Integer imageId) {
-        imageService.deleteImage(imageId);
-        return "redirect:/images";
+    public String deleteImageSubmit(@RequestParam(name = "imageId") Integer imageId, HttpSession session, Model model) {
+        User user = (User)session.getAttribute("loggeduser");
+        Image image = imageService.getImage(imageId);
+        User existingUser = image.getUser();
+        String error = "Only the owner of the image can delete the image";
+        if (user.getId() == existingUser.getId()) {
+            imageService.deleteImage(imageId);
+            return "redirect:/images";
+        } else {
+            model.addAttribute("image", image);
+            model.addAttribute("deleteError", error);
+            return "images/image";
+        }
     }
 
 
