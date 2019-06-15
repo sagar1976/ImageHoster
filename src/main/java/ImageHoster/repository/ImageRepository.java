@@ -111,19 +111,4 @@ public class ImageRepository {
             transaction.rollback();
         }
     }
-
-    public void updateComment(Comment comment) {
-        EntityManager em = emf.createEntityManager();
-        EntityTransaction transaction = em.getTransaction();
-
-        try {
-            transaction.begin();
-            em.persist(comment);
-            transaction.commit();
-        } catch (Exception e) {
-            transaction.rollback();
-        }
-    }
-
-
 }
