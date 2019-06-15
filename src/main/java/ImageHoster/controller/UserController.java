@@ -75,7 +75,7 @@ public class UserController {
                 smallLetter = true;
             }
 
-            if (Character.isDigit(ch) == false && Character.isUpperCase(ch) == false && Character.isLowerCase(ch) == false ) {
+            if (Character.isDigit(ch) == false && Character.isUpperCase(ch) == false && Character.isLowerCase(ch) == false ) {//checks for finding special characters logic
                 specialCharacter = true;
             }
 
