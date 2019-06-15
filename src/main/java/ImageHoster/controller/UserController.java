@@ -54,18 +54,8 @@ public class UserController {
             return "users/registration";
         }
     }
-<<<<<<< HEAD
 
-    //This method checks for password strength for password combination of "Password must contain atleast 1 alphabet, 1 number & 1 special character"
-=======
-/*    @RequestMapping(value = "users/registration", method = RequestMethod.POST)
-    public String registerUser(User user, Model model) {
-        userService.registerUser(user);
-        return "redirect:/users/login";
-    }*/
-
-
->>>>>>> Newfeatures
+    //This method verify password strength as stated "Password must contain atleast 1 alphabet, 1 number & 1 special character"
     private static boolean checkPassword(String str){
         char ch;
         boolean capitalLetter = false;
