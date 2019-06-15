@@ -35,11 +35,11 @@ public class ImageController {
     }
 
     //This method is called when the details of the specific image with corresponding title are to be displayed
-    //The logic is to get the image from the database with corresponding ImageId. After getting the image from the database the details are shown
+    //The logic is to get the image from the databse with corresponding title. After getting the image from the database the details are shown
     //First receive the dynamic parameter in the incoming request URL in a string variable 'title' and also the Model type object
-    //Call the getImageById() method in the business logic to fetch all the details of that image
+    //Call the getImageByTitle() method in the business logic to fetch all the details of that image
     //Add the image in the Model type object with 'image' as the key
-    //Return 'images/image.html' file. Also images will same title can be retrieved without any errors
+    //Return 'images/image.html' file
 
     //Also now you need to add the tags of an image in the Model type object
     //Here a list of tags is added in the Model type object
@@ -52,20 +52,6 @@ public class ImageController {
         model.addAttribute("comments", image.getComments());
         return "images/image";
     }
-
-    @RequestMapping(value ="/image/{imageId}/{imageTitle}/comment", method = RequestMethod.POST)
-    public String updateComment(@RequestParam("comment") String comments, @PathVariable("imageId") Integer imageId, @PathVariable("imageTitle") String imageTitle, Comment newComment, HttpSession session) {
-        User user = (User) session.getAttribute("loggeduser");
-        newComment.setUser(user);
-        newComment.setText(comments);
-        Image image = imageService.getImage(imageId);
-        newComment.setImage(image);
-        imageService.updateComment(newComment);
-        return "redirect:/images/{imageId}/{imageTitle}";
-
-    }
-
-
 
     //This controller method is called when the request pattern is of type 'images/upload'
     //The method returns 'images/upload.html' file
@@ -105,7 +91,6 @@ public class ImageController {
 
     //The method first needs to convert the list of all the tags to a string containing all the tags separated by a comma and then add this string in a Model type object
     //This string is then displayed by 'edit.html' file as previous tags of an image
-    //This method will allow only user-owner of the image to edit the image and for other users it will show same image
     @RequestMapping(value = "/editImage")
     public String editImage(@RequestParam("imageId") Integer imageId, Model model, HttpSession session) {
         User user = (User) session.getAttribute("loggeduser");
@@ -123,7 +108,6 @@ public class ImageController {
             return "images/image";
         }
     }
-
 
     //This controller method is called when the request pattern is of type 'images/edit' and also the incoming request is of PUT type
     //The method receives the imageFile, imageId, updated image, along with the Http Session
@@ -156,14 +140,13 @@ public class ImageController {
         updatedImage.setDate(new Date());
 
         imageService.updateImage(updatedImage);
-        return "redirect:/images";
+        return "redirect:/images/";
     }
 
 
     //This controller method is called when the request pattern is of type 'deleteImage' and also the incoming request is of DELETE type
     //The method calls the deleteImage() method in the business logic passing the id of the image to be deleted
     //Looks for a controller method with request mapping of type '/images'
-    //This controller method only allows owner of the image to delete the image
     @RequestMapping(value = "/deleteImage", method = RequestMethod.DELETE)
     public String deleteImageSubmit(@RequestParam(name = "imageId") Integer imageId, HttpSession session, Model model) {
         User user = (User)session.getAttribute("loggeduser");

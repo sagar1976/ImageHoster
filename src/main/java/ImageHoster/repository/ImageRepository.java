@@ -48,7 +48,7 @@ public class ImageRepository {
     }
 
     //The method creates an instance of EntityManager
-    //Executes JPQL query to fetch the image from the database with corresponding ImageId
+    //Executes JPQL query to fetch the image from the database with corresponding title
     //Returns the image in case the image is found in the database
     //Returns null if no image is found in the database
     public Image getImageById(Integer imageId) {
@@ -111,19 +111,4 @@ public class ImageRepository {
             transaction.rollback();
         }
     }
-
-    public void updateComment(Comment comment) {
-        EntityManager em = emf.createEntityManager();
-        EntityTransaction transaction = em.getTransaction();
-
-        try {
-            transaction.begin();
-            em.persist(comment);
-            transaction.commit();
-        } catch (Exception e) {
-            transaction.rollback();
-        }
-    }
-
-
 }

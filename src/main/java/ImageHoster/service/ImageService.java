@@ -47,9 +47,4 @@ public class ImageService {
         imageRepository.deleteImage(imageId);
     }
 
-    //The method calls the updateComment() method in the Repository and passes the comment of the image to be inserted in the database
-    public void updateComment(Comment comment) {
-        imageRepository.updateComment(comment);
-    }
-
 }
