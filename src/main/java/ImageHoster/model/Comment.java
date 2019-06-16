@@ -48,6 +48,19 @@ public class Comment {
     }
 
     public void setText(String text) {
+
+        //One can truncate a string according to the JPA annotations in the setter for the corresponding field:
+
+        try {
+            int size = getClass().getDeclaredField("text").getAnnotation(Column.class).length();
+            int inLength = text.length();
+            if (inLength>size)
+            {
+                text = text.substring(0, size);
+            }
+        } catch (NoSuchFieldException ex) {
+        } catch (SecurityException ex) {
+        }
         this.text = text;
     }
 
